@@ -1,0 +1,72 @@
+.min-h-screen.flex.items-center.justify-center.py-12.px-4.sm:px-6.lg:px-8
+  .max-w-md.w-full.space-y-8
+    .text-center
+      %h2.mt-6.text-3xl.font-extrabold.text-gray-900
+        Create your account
+      %p.mt-2.text-sm.text-gray-600
+        Join our organization-based platform
+
+    = form_with model: @user, url: signup_path, local: true, 
+                class: "mt-8 space-y-6" do |f|
+      
+      .space-y-4
+        .grid.grid-cols-2.gap-4
+          .div
+            = f.label :first_name, "First Name", 
+                      class: "block text-sm font-medium text-gray-700"
+            = f.text_field :first_name, 
+                          class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                          placeholder: "John"
+
+          .div
+            = f.label :last_name, "Last Name", 
+                      class: "block text-sm font-medium text-gray-700"
+            = f.text_field :last_name, 
+                          class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                          placeholder: "Doe"
+
+        .div
+          = f.label :email, "Email Address", 
+                    class: "block text-sm font-medium text-gray-700"
+          = f.email_field :email, 
+                         class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                         placeholder: "john@example.com"
+
+        .div
+          = f.label :date_of_birth, "Date of Birth", 
+                    class: "block text-sm font-medium text-gray-700"
+          = f.date_field :date_of_birth, 
+                        class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          %p.mt-1.text-xs.text-gray-500
+            We use this to determine age-appropriate content and spaces
+
+        .div
+          = f.label :password, "Password", 
+                    class: "block text-sm font-medium text-gray-700"
+          = f.password_field :password, 
+                            class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                            placeholder: "Minimum 6 characters"
+
+        .div
+          = f.label :password_confirmation, "Confirm Password", 
+                    class: "block text-sm font-medium text-gray-700"
+          = f.password_field :password_confirmation, 
+                            class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+
+      - if @user.errors.any?
+        .bg-red-50.border.border-red-300.rounded-md.p-4
+          %h4.text-red-800.font-medium
+            Please fix the following errors:
+          %ul.mt-2.text-sm.text-red-700.list-disc.list-inside
+            - @user.errors.full_messages.each do |message|
+              %li= message
+
+      .div
+        = f.submit "Create Account", 
+                  class: "group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200"
+
+    .text-center.mt-4
+      %p.text-sm.text-gray-600
+        Already have an account?
+        = link_to "Sign in here", login_path, 
+                  class: "font-medium text-blue-600 hover:text-blue-500" 

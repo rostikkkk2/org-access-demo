@@ -1,0 +1,44 @@
+.max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8.py-8
+  .bg-white.shadow.rounded-lg.overflow-hidden
+    .px-6.py-4.border-b.border-gray-200
+      %h1.text-2xl.font-bold.text-gray-900 User Profile
+
+    .px-6.py-4
+      .grid.md:grid-cols-2.gap-6
+        .div
+          %h2.text-lg.font-medium.text-gray-900.mb-4 Personal Information
+          .space-y-3
+            .div
+              %dt.text-sm.font-medium.text-gray-500 Full Name
+              %dd.text-sm.text-gray-900= current_user.full_name
+            
+            .div
+              %dt.text-sm.font-medium.text-gray-500 Email
+              %dd.text-sm.text-gray-900= current_user.email
+            
+            .div
+              %dt.text-sm.font-medium.text-gray-500 Date of Birth
+              %dd.text-sm.text-gray-900= current_user.date_of_birth.strftime("%B %d, %Y")
+            
+            .div
+              %dt.text-sm.font-medium.text-gray-500 Age
+              %dd.text-sm.text-gray-900= "#{current_user.age} years old"
+            
+            .div
+              %dt.text-sm.font-medium.text-gray-500 Age Group
+              %dd
+                %span.px-2.py-1.bg-blue-100.text-blue-800.rounded-full.text-sm
+                  = current_user.age_group.capitalize
+
+        .div
+          %h2.text-lg.font-medium.text-gray-900.mb-4 Account Status
+          .space-y-3
+            .div
+              %dt.text-sm.font-medium.text-gray-500 Account Type
+              %dd
+                %span.px-2.py-1.bg-green-100.text-green-800.rounded-full.text-sm
+                  = current_user.adult? ? "Adult" : "Minor"
+            
+            .div
+              %dt.text-sm.font-medium.text-gray-500 Member Since
+              %dd.text-sm.text-gray-900= current_user.created_at.strftime("%B %Y") 

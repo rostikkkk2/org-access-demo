@@ -1,0 +1,46 @@
+.max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8.py-8
+  .flex.justify-between.items-center.mb-6
+    .div
+      %h1.text-3xl.font-bold.text-gray-900
+        #{@organization.name} Projects
+      %p.text-gray-600= "#{@projects.count} projects"
+    
+    .space-x-2
+      = link_to "← Back to Organization", @organization,
+                class: "text-blue-600 hover:text-blue-700"
+      - if policy(Project.new(organization: @organization)).create?
+        = link_to "New Project", new_organization_project_path(@organization),
+                  class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+
+  - if @projects.any?
+    .grid.gap-6.md:grid-cols-2.lg:grid-cols-3
+      - @projects.each do |project|
+        .bg-white.rounded-lg.shadow.p-6
+          .flex.justify-between.items-start.mb-4
+            %h3.text-lg.font-semibold.text-gray-900
+              = link_to project.title, organization_project_path(@organization, project),
+                        class: "hover:text-blue-600"
+            %span.px-2.py-1.text-xs.rounded-full{class: project.status_badge_class}
+              = project.status.capitalize
+
+          %p.text-gray-600.text-sm.mb-4= truncate(project.description, length: 100)
+          
+          .flex.justify-between.items-center.text-sm.text-gray-500
+            .div
+              %p= "By #{project.created_by.full_name}"
+              - if project.deadline.present?
+                %p{class: project.overdue? ? 'text-red-600' : ''}
+                  Due: #{project.deadline.strftime('%b %d, %Y')}
+            
+            - if policy(project).update?
+              .space-x-1
+                - if project.status == 'active'
+                  = button_to "Complete", complete_organization_project_path(@organization, project),
+                            method: :patch,
+                            class: "text-green-600 hover:text-green-700 text-xs"
+  - else
+    .text-center.py-12
+      %p.text-gray-500.mb-4 No projects yet
+      - if policy(Project.new(organization: @organization)).create?
+        = link_to "Create First Project", new_organization_project_path(@organization),
+                  class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"

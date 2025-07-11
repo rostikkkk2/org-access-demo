@@ -10,5 +10,45 @@
     = stylesheet_link_tag "application", "data-turbo-track": "reload"
     = javascript_include_tag "application", "data-turbo-track": "reload", type: "module"
     
-  %body
-    = yield
+  %body.bg-gray-50.min-h-screen
+    %nav.bg-white.shadow-sm.border-b
+      .max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8
+        .flex.justify-between.h-16
+          .flex.items-center
+            = link_to root_path, class: "text-xl font-bold text-blue-600" do
+              OrgAccessDemo
+          
+          .flex.items-center.space-x-4
+            - if current_user
+              .flex.items-center.space-x-4
+                %span.text-gray-700
+                  Welcome, #{current_user.first_name}!
+                %span.text-sm.text-gray-500
+                  Age: #{current_user.age} (#{current_user.age_group})
+                = button_to "Logout", logout_path, method: :delete, 
+                          class: "bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600"
+            - else
+              = link_to "Login", login_path, 
+                        class: "text-blue-600 hover:text-blue-700 px-3 py-2"
+              = link_to "Sign Up", signup_path, 
+                        class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+
+    - if flash.any?
+      .max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8.py-4
+        - flash.each do |type, message|
+          .alert{class: "alert-#{type}"}
+            - if type == 'success'
+              .bg-green-100.border.border-green-400.text-green-700.px-4.py-3.rounded.mb-4
+                = message
+            - elsif type == 'alert'
+              .bg-red-100.border.border-red-400.text-red-700.px-4.py-3.rounded.mb-4
+                = message
+            - elsif type == 'warning'
+              .bg-yellow-100.border.border-yellow-400.text-yellow-700.px-4.py-3.rounded.mb-4
+                = message
+            - else
+              .bg-blue-100.border.border-blue-400.text-blue-700.px-4.py-3.rounded.mb-4
+                = message
+
+    %main
+      = yield
