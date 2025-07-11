@@ -1,0 +1,105 @@
+.max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8.py-8
+  .flex.justify-between.items-center.mb-6
+    %h1.text-3xl.font-bold.text-gray-900
+      #{@organization.name} - Admin Panel
+    .space-x-2
+      = link_to "Projects", organization_projects_path(@organization),
+                class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      = link_to "← Back to Organization", @organization,
+                class: "text-blue-600 hover:text-blue-700"
+
+  .grid.lg:grid-cols-2.gap-8
+    .bg-white.rounded-lg.shadow
+      .px-6.py-4.border-b.border-gray-200
+        %h2.text-lg.font-medium.text-gray-900
+          Pending Membership Requests
+          %span.bg-yellow-100.text-yellow-800.text-xs.px-2.py-1.rounded-full.ml-2
+            = @pending_requests.count
+
+      .p-6
+        - if @pending_requests.any?
+          .space-y-4
+            - @pending_requests.each do |request|
+              .border.border-gray-200.rounded-lg.p-4
+                .flex.justify-between.items-start.mb-3
+                  .div
+                    %h3.font-medium.text-gray-900= request.user.full_name
+                    %p.text-sm.text-gray-600= request.user.email
+                    %p.text-xs.text-gray-500
+                      Requested #{time_ago_in_words(request.created_at)} ago
+
+                - if request.message.present?
+                  .bg-gray-50.p-3.rounded.mb-3
+                    %p.text-sm.text-gray-700= request.message
+
+                .flex.space-x-2
+                  = button_to "Approve", approve_membership_organization_path(id: @organization.id, membership_id: request),
+                            method: :patch,
+                            class: "bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600",
+                            data: { confirm: "Approve #{request.user.full_name}?" }
+                  = button_to "Reject", reject_membership_organization_path(id: @organization.id, membership_id: request),
+                            method: :patch,
+                            class: "bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600",
+                            data: { confirm: "Reject #{request.user.full_name}?" }
+        - else
+          .text-center.py-8.text-gray-500
+            %p No pending requests
+
+    .bg-white.rounded-lg.shadow
+      .px-6.py-4.border-b.border-gray-200
+        %h2.text-lg.font-medium.text-gray-900
+          Members Management
+          %span.bg-blue-100.text-blue-800.text-xs.px-2.py-1.rounded-full.ml-2
+            = @members.count
+
+      .p-6
+        .space-y-3
+          - @members.each do |membership|
+            .flex.justify-between.items-center.p-3.bg-gray-50.rounded
+              .div
+                %h4.font-medium.text-gray-900= membership.user.full_name
+                %p.text-sm.text-gray-600= membership.user.email
+                %p.text-xs.text-gray-500
+                  Joined #{time_ago_in_words(membership.created_at)} ago
+
+              .flex.items-center.space-x-3
+                %span.px-2.py-1.text-xs.rounded-full{class: role_badge_class(membership.role)}
+                  = membership.role_name
+
+                - if membership.user != current_user && current_user.admin_of?(@organization)
+                  = form_with url: update_member_role_organization_path(@organization, membership_id: membership.id), method: :patch, local: true, class: "inline" do |f|
+                    = f.select :role, options_for_select([['Employee', 'employee'], ['Manager', 'manager'], ['Admin', 'admin']], membership.role), {}, { class: "text-xs border rounded px-2 py-1", onchange: "this.form.submit()" }
+                  = button_to "Remove", remove_member_organization_path(@organization, membership_id: membership.id),
+                                      method: :patch, class: "text-red-600 hover:text-red-700 text-xs", data: { confirm: "Remove #{membership.user.full_name} from #{@organization.name}?" }
+
+  .mt-8.grid.grid-cols-1.md:grid-cols-4.gap-6
+    .bg-white.rounded-lg.shadow.p-6
+      .flex.items-center
+        .ml-4
+          %p.text-sm.font-medium.text-gray-600 Total Members
+          %p.text-2xl.font-semibold.text-gray-900= @organization.total_members
+
+    .bg-white.rounded-lg.shadow.p-6
+      .flex.items-center
+        .ml-4
+          %p.text-sm.font-medium.text-gray-600 Pending Requests
+          %p.text-2xl.font-semibold.text-gray-900= @pending_requests.count
+
+    .bg-white.rounded-lg.shadow.p-6
+      .flex.items-center
+        .ml-4
+          %p.text-sm.font-medium.text-gray-600 Admins
+          %p.text-2xl.font-semibold.text-gray-900= @organization.admins.uniq.count
+
+    .bg-white.rounded-lg.shadow.p-6
+      .flex.items-center
+        .ml-4
+          %p.text-sm.font-medium.text-gray-600 Managers
+          %p.text-2xl.font-semibold.text-gray-900= @organization.managers.count
+
+:javascript
+  function changeRole(membershipId, newRole) {
+    if (confirm('Change role to ' + newRole + '?')) {
+      console.log('Change membership', membershipId, 'to', newRole);
+    }
+  } 

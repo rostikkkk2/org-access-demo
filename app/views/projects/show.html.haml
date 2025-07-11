@@ -1,0 +1,54 @@
+.max-w-4xl.mx-auto.px-4.sm:px-6.lg:px-8.py-8
+  .bg-white.shadow.rounded-lg.p-6
+    .flex.justify-between.items-start.mb-6
+      .div
+        %h1.text-3xl.font-bold.text-gray-900= @project.title
+        %p.text-gray-600= @organization.name
+      
+      .flex.items-center.space-x-2
+        %span.px-3.py-1.rounded-full{class: @project.status_badge_class}
+          = @project.status.capitalize
+        
+    .space-y-6
+      .div
+        %h2.text-lg.font-medium.text-gray-900 Description
+        %p.text-gray-700= simple_format(@project.description)
+
+      .grid.md:grid-cols-2.gap-6
+        .div
+          %h3.text-md.font-medium.text-gray-900 Project Details
+          %dl.space-y-2.text-sm
+            %dt.font-medium.text-gray-600 Created by:
+            %dd= @project.created_by.full_name
+            
+            %dt.font-medium.text-gray-600 Created:
+            %dd= @project.created_at.strftime('%B %d, %Y')
+            
+            - if @project.deadline.present?
+              %dt.font-medium.text-gray-600 Deadline:
+              %dd{class: @project.overdue? ? 'text-red-600 font-medium' : ''}
+                = @project.deadline.strftime('%B %d, %Y')
+                - if @project.overdue?
+                  %span.text-red-600 (Overdue)
+
+        .div
+          %h3.text-md.font-medium.text-gray-900 Actions
+          .space-y-2
+            - if policy(@project).update? && @project.status == 'active'
+              = button_to "Mark as Completed", complete_organization_project_path(@organization, @project),
+                        method: :patch,
+                        class: "block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-center",
+                        data: { confirm: 'Mark this project as completed?' }
+            
+            
+            - if policy(@project).destroy?
+              = button_to "Delete Project", organization_project_path(@organization, @project),
+                        method: :delete,
+                        class: "block bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 text-center",
+                        data: { confirm: 'Are you sure? This cannot be undone.' }
+
+    .mt-6.flex.space-x-4
+      = link_to "← Back to Projects", organization_projects_path(@organization),
+                class: "text-blue-600 hover:text-blue-700"
+      = link_to "Back to Organization", @organization,
+                class: "text-gray-600 hover:text-gray-700" 

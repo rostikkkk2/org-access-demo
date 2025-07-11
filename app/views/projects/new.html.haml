@@ -1,0 +1,34 @@
+.max-w-2xl.mx-auto.px-4.sm:px-6.lg:px-8.py-8
+  %h1.text-3xl.font-bold.text-gray-900.mb-6
+    Create New Project for #{@organization.name}
+
+  = form_with model: [@organization, @project], local: true, class: "space-y-6" do |f|
+    - if @project.errors.any?
+      .bg-red-50.border.border-red-300.rounded-md.p-4.mb-6
+        %h4.text-red-800.font-medium Please fix the following errors:
+        %ul.mt-2.text-sm.text-red-700.list-disc.list-inside
+          - @project.errors.full_messages.each do |message|
+            %li= message
+
+    .div
+      = f.label :title, "Project Title", class: "block text-sm font-medium text-gray-700"
+      = f.text_field :title, 
+                    class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                    placeholder: "Enter project title"
+
+    .div
+      = f.label :description, "Description", class: "block text-sm font-medium text-gray-700"
+      = f.text_area :description, rows: 4,
+                   class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                   placeholder: "Describe the project goals and requirements"
+
+    .div
+      = f.label :deadline, "Deadline", class: "block text-sm font-medium text-gray-700"
+      = f.datetime_local_field :deadline,
+                              class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+
+    .flex.space-x-4
+      = f.submit "Create Project", 
+                class: "bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+      = link_to "Cancel", organization_projects_path(@organization),
+                class: "text-gray-600 hover:text-gray-700" 

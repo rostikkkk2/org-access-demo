@@ -1,24 +1,52 @@
-# README
+## 🔄 How It Works (Business Logic)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### The Basic Flow:
+1. **User signs up** → Creates account with email/password
+2. **User finds organization** → Browses list of available organizations  
+3. **User requests to join** → Clicks "Join" and writes optional message
+4. **Admin gets notification** → Sees pending request in Admin Panel
+5. **Admin decides** → Approves or rejects the request
+6. **User gets access** → Can now see organization's projects and content
 
-Things you may want to cover:
+### What Each Role Can Do:
 
-* Ruby version
+** Employee (Basic Member):**
+- View organization page and members
+- See all projects in the organization
+- Cannot create new projects
+- Cannot manage other people
 
-* System dependencies
+** Manager:**
+- Everything Employee can do, PLUS:
+- Create new projects
+- Edit projects they created
+- Mark projects as complete
 
-* Configuration
+** Admin:**
+- Everything Manager can do, PLUS:
+- Approve/reject membership requests
+- Change anyone's role (promote Employee to Manager, etc.)
+- Edit organization details
+- Remove ymployees/members from organization
 
-* Database creation
 
-* Database initialization
+#  How to  setup project locally
 
-* How to run the test suite
+## Stack
+- ruby 3.3.3
+- rails 7.1.5
+- node 21.7.3
+- postgres 11
 
-* Services (job queues, cache servers, search engines, etc.)
+### how to setup application
 
-* Deployment instructions
+- bundle install
+- rails db:create
+- rails db:migrate
+- rails db:seeds
+- rails s
 
-* ...
+
+# the link for mini demo how works application 
+
+- https://drive.google.com/file/d/19HEYsj5iSOqtP02mgckgm4aYpwfUKh9p/view

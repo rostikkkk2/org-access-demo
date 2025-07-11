@@ -1,0 +1,64 @@
+.max-w-7xl.mx-auto.px-4.sm:px-6.lg:px-8.py-8
+  - if current_user
+    .flex.justify-between.items-center.mb-6
+      %h1.text-3xl.font-bold.text-gray-900
+        Welcome #{current_user.first_name}!
+
+    - if @my_organizations.any?
+      .mb-8
+        %h2.text-xl.font-semibold.text-gray-900.mb-4 My Organizations
+        .grid.gap-4.md:grid-cols-2
+          - @my_organizations.each do |org|
+            .bg-white.p-4.rounded-lg.shadow
+              .flex.justify-between.items-start.mb-3
+                .div
+                  %h3.font-medium= org.name
+                  %p.text-sm.text-gray-600= "Role: #{current_user.role_in(org).capitalize}"
+                  %p.text-xs.text-gray-500= "#{org.active_projects_count} active projects"
+                .flex.space-x-2
+                  = link_to "View", org, class: "text-blue-600 hover:text-blue-700 text-sm"
+                  = link_to "Projects", organization_projects_path(org), 
+                            class: "text-green-600 hover:text-green-700 text-sm"
+
+    - if @pending_requests.any?
+      .mb-8.bg-yellow-50.border.border-yellow-200.rounded-lg.p-4
+        %h3.font-medium.text-yellow-900.mb-2 Pending Applications
+        .space-y-2
+          - @pending_requests.each do |request|
+            .flex.justify-between.items-center
+              %span.text-yellow-800= request.organization.name
+              %span.text-yellow-600.text-sm Pending Review
+
+    %h2.text-xl.font-semibold.text-gray-900.mb-6
+      = @my_organizations.any? ? "All Organizations" : "Join an Organization"
+
+  - else
+    .text-center.py-12
+      %h1.text-4xl.font-bold.text-gray-900.mb-4
+        Organization Access Control
+      %p.text-gray-600.mb-8
+        Join organizations and collaborate with teams
+
+  .grid.gap-6.md:grid-cols-2.lg:grid-cols-3
+    - @organizations.each do |org|
+      .bg-white.rounded-lg.shadow.p-6
+        %h3.text-lg.font-semibold.text-gray-900.mb-2= org.name
+        %p.text-gray-600.text-sm.mb-4= truncate(org.description, length: 100)
+        
+        .flex.justify-between.items-center
+          - if current_user&.member_of?(org)
+            .div
+              %span.text-sm.text-gray-500
+                #{org.total_members} members
+              %span.text-sm.text-gray-500.ml-2
+                #{org.active_projects_count} projects
+          
+          - if current_user
+            - if current_user.member_of?(org)
+              = link_to "Open", org, class: "bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600"
+            - elsif current_user.pending_membership?(org)
+              %span.text-yellow-600.text-sm Pending
+            - else
+              = link_to "Join", org, class: "bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+          - else
+            = link_to "View", org, class: "text-blue-600 hover:text-blue-700 text-sm"
